@@ -31,13 +31,15 @@ module.exports = function(app){
         var lastCharacter = newAddOn[newAddOn.length-1];
         if(lastCharacter == '9'){
             while(newAddOn[i]=='9'){
-                if(i==0){
-                    newAddOn.shift("a");
-                }
-                else{
                 newAddOn[i] = 'a';
+                if(i==0){
+                    newAddOn.unshift("a");
                 }
                  i--;
+            }
+            if(i >= 0){
+            var currentIndex = characters.indexOf(newAddOn[i]);
+             newAddOn[i] = characters[currentIndex+1]; 
             }
         }
         else{
