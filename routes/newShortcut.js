@@ -8,6 +8,13 @@ var Addendum = require(process.cwd() + "/dbmodels/addendum.js");
 Addendum = mongoose.model("Addendum");
 var rootURL = "https://url-shortener-micro-zbay.c9users.io/tiny/";
 var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
+Addendum.findOne({}, function(err, doc){
+    if(!doc){
+        var newAddendum = new Addendum({"addendumToken": "a"});
+        newAddendum.save();
+        Pair.remove({});
+    }
+});
 
     app.get("/new/*", function(req, res){
         var longURL = req.url.slice(req.url.indexOf("/new/")+5);
@@ -18,13 +25,13 @@ var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^
             Pair.findOne({"original_url": longURL}, function(err, doc){
   
                 if(doc){
-                    res.send(JSON.stringify({"original_url":longURL, "short_url": doc.short_url}));
+                    res.send(JSON.stringify({"original_url":longURL, "short_url": rootURL + doc.short_url}));
                 }
                 else{
                     incrementAppendum(data.addendumToken);
                     var newPair = new Pair({"original_url": longURL, "short_url":shortURL}); 
                     newPair.save(function(err, message){
-                    res.send(JSON.stringify({"original_url":longURL, "short_url": shortURL}));
+                    res.send(JSON.stringify({"original_url":longURL, "short_url": rootURL + shortURL}));
                 });
                 }
             });
