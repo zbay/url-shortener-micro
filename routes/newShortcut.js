@@ -6,16 +6,15 @@ var Pair = require(process.cwd() + "/dbmodels/pairs.js");
 Pair = mongoose.model("Pair");
 var Addendum = require(process.cwd() + "/dbmodels/addendum.js");
 Addendum = mongoose.model("Addendum");
-var rootURL = "https://url-shortener-micro-zbay.c9users.io/";
+var rootURL = "https://url-shortener-micro-zbay.c9users.io/tiny/";
 var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
 
     app.get("/new/*", function(req, res){
         var longURL = req.url.slice(req.url.indexOf("/new/")+5);
         Addendum.findOne({}, function(err, data){
         incrementAppendum(data.addendumToken);
-        var shortURL = rootURL + data.addendumToken;
+        var shortURL = data.addendumToken;
         if(longURL.match(urlRegex)){
-            console.log(shortURL);
                var newPair = new Pair({"original_url": longURL, "short_url":shortURL}); 
                 newPair.save(function(err, message){
                     res.send(JSON.stringify({"original_url":longURL, "short_url": shortURL}));
@@ -50,10 +49,6 @@ var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^
              var currentIndex = characters.indexOf(newAddOn[i]);
              newAddOn[i] = characters[currentIndex+1];
         }
-        console.log(newAddOn);
-        Addendum.update({$set: {"addendumToken": newAddOn.join("")}}, function(err, data){
-            console.log("error: " +err);
-            console.log("success? " + data);
-        });
+        Addendum.update({$set: {"addendumToken": newAddOn.join("")}});
     }
 }
