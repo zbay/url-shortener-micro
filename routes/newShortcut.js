@@ -6,7 +6,8 @@ var Pair = require(process.cwd() + "/dbmodels/pairs.js");
 Pair = mongoose.model("Pair");
 var Addendum = require(process.cwd() + "/dbmodels/addendum.js");
 Addendum = mongoose.model("Addendum");
-var rootURL = "https://url-shortener-micro-zbay.c9users.io/tiny/";
+//var rootURL = "https://url-shortener-micro-zbay.c9users.io/tiny/";
+var rootURL = "https://url-shortener-micro.herokuapp.com/tiny/";
 var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
 Addendum.findOne({}, function(err, doc){
     if(!doc){
