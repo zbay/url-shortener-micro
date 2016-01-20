@@ -11,14 +11,23 @@ var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^
 
     app.get("/new/*", function(req, res){
         var longURL = req.url.slice(req.url.indexOf("/new/")+5);
+        console.log(longURL);
         Addendum.findOne({}, function(err, data){
-        incrementAppendum(data.addendumToken);
         var shortURL = data.addendumToken;
         if(longURL.match(urlRegex)){
-               var newPair = new Pair({"original_url": longURL, "short_url":shortURL}); 
-                newPair.save(function(err, message){
+            Pair.findOne({"original_url": longURL}, function(err, doc){
+  
+                if(doc){
+                    res.send(JSON.stringify({"original_url":longURL, "short_url": doc.short_url}));
+                }
+                else{
+                    incrementAppendum(data.addendumToken);
+                    var newPair = new Pair({"original_url": longURL, "short_url":shortURL}); 
+                    newPair.save(function(err, message){
                     res.send(JSON.stringify({"original_url":longURL, "short_url": shortURL}));
                 });
+                }
+            });
         }
         else{
             res.send(JSON.stringify({"error":"URL invalid"}));
@@ -45,10 +54,13 @@ var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^
             }
         }
         else{
-            console.log("in the right place: " + newAddOn);
              var currentIndex = characters.indexOf(newAddOn[i]);
              newAddOn[i] = characters[currentIndex+1];
+             console.log(newAddOn);
         }
-        Addendum.update({$set: {"addendumToken": newAddOn.join("")}});
+        Addendum.update({$set: {"addendumToken": newAddOn.join("")}}, function(err, data){
+            console.log(err);
+            console.log(data);
+        });
     }
 }
