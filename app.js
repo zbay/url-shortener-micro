@@ -9,7 +9,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index.js');
 var newShortcut = require('./routes/newShortcut.js');
 var savedShortcut = require('./routes/savedShortcut.js');
-mongoose.connect('mongodb://heroku_bdpzl0fg:2aq0iso1kf2gjkv2b8tb1nm5g8@ds047085.mongolab.com:47085/heroku_bdpzl0fg', function (err, db)
+mongoose.connect('mongodb://heroku_bdpzl0fg:shortening123@ds047085.mongolab.com:47085/heroku_bdpzl0fg', function (err, db)
 //mongoose.connect('mongodb://localhost:27017/url-shortener-micro', function (err, db)
 {
  if (err) {
