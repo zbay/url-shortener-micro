@@ -1,11 +1,15 @@
-var Pair = require("../dbmodels/pairs.js");
+var mongoose = require('mongoose');
+var Pair = require(process.cwd() + "/dbmodels/pairs.js");
+Pair = mongoose.model("Pair");
 var dotenv = require('dotenv').load();
+var rootURL = "https://url-shortener-micro-zbay.c9users.io/";
 module.exports = function(app){
-    app.get("/new/:longURL", function(req, res){
-        var longURL = req.params.longURL;
-        var shortURL = shortify(longURL);
+    app.get("/new/*", function(req, res){
+        var longURL = req.url.slice(req.url.indexOf("/new/")+5);
+        var shortURL = shortify();
         var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
         if(longURL.match(urlRegex)){
+            console.log(shortURL);
                var newPair = new Pair({"original_url": longURL, "short_url":shortURL}); 
                 newPair.save(function(err, message){
                     res.send(JSON.stringify({"original_url":longURL, "short_url": shortURL}));
@@ -15,11 +19,10 @@ module.exports = function(app){
             res.send(JSON.stringify({"error":"URL invalid"}));
         }
     });
-    function shortify(longURL){
-        var addOn = process.env.CURRENT_APPENDUM;
+    function shortify(){
+        var addOn = "" + process.env.CURRENT_APPENDUM;
         incrementAppendum(addOn);
-        var baseURL = process.cwd().slice(process.cwd().indexOf("/new/") +1);
-        return baseURL + addOn;
+        return rootURL + addOn;
     }
     function incrementAppendum(addOn) {
         var newAddOn = addOn.split('');
@@ -39,7 +42,7 @@ module.exports = function(app){
         }
         else{
              var currentIndex = characters.indexOf(newAddOn[i]);
-             newAddOn[i] = characters.charAt(currentIndex+1);
+             newAddOn[i] = characters[currentIndex+1];
         }
        
         process.env.CURRENT_APPENDUM = newAddOn.join("");

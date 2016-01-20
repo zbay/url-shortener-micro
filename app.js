@@ -24,6 +24,7 @@ var port = process.env.PORT || 8080;
     
 routes(app);
 newShortcut(app);
+savedShortcut(app); //route to the saved pair URL
 
 app.listen(port, function() {
     console.log('Node.js listening on port ' + port);
