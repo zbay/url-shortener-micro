@@ -1,20 +1,13 @@
-**Timestamp Microservice**
+**URL Shortener Microservice**
 
-
-Uses:
-* You can pass a string as a parameter, and it will check to see whether that string contains either a unix timestamp,
-a natural language date (example: January 1, 2016), or a date in YYYY-MM-DD format (like 2016-01-18).
-* If it does, it returns both the Unix timestamp and the natural language form of that date.
-* If it does not contain a date or Unix timestamp, it returns null for those properties.
+** Use: **
+            
+Append a valid URL to this address's "new" directory, and this site will save and return a (hopefully) shortened version of the URL!
 
 Sample Input:
+            
+https://url-shortener-micro.herokuapp.com/new/http://www.google.com
+            
+**Sample Output:**
 
-https://timestamper-micro.herokuapp.com/December%2015,%202015
-
-https://timestamper-micro.herokuapp.com/1450137600
-
-https://timestamper-micro.herokuapp.com/2015-12-15
-
-Sample Output:
-
-{ "unix": 1450137600, "natural": "December 15, 2015" }
+{ "original_url": "http://www.google.com", "shortened_url": "url-shortener-micro.herokuapp.com/tiny/c" }
