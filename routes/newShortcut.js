@@ -1,13 +1,19 @@
+module.exports = function(app){
+
 var mongoose = require('mongoose');
+var mongo = require('mongodb');
 var Pair = require(process.cwd() + "/dbmodels/pairs.js");
 Pair = mongoose.model("Pair");
-var dotenv = require('dotenv').load();
+var Addendum = require(process.cwd() + "/dbmodels/addendum.js");
+Addendum = mongoose.model("Addendum");
 var rootURL = "https://url-shortener-micro-zbay.c9users.io/";
-module.exports = function(app){
+var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
+
     app.get("/new/*", function(req, res){
         var longURL = req.url.slice(req.url.indexOf("/new/")+5);
-        var shortURL = shortify();
-        var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
+        Addendum.findOne({}, function(err, data){
+        incrementAppendum(data.addendumToken);
+        var shortURL = rootURL + data.addendumToken;
         if(longURL.match(urlRegex)){
             console.log(shortURL);
                var newPair = new Pair({"original_url": longURL, "short_url":shortURL}); 
@@ -19,11 +25,8 @@ module.exports = function(app){
             res.send(JSON.stringify({"error":"URL invalid"}));
         }
     });
-    function shortify(){
-        var addOn = "" + process.env.CURRENT_APPENDUM;
-        incrementAppendum(addOn);
-        return rootURL + addOn;
-    }
+
+    });
     function incrementAppendum(addOn) {
         var newAddOn = addOn.split('');
         var i = newAddOn.length-1;
@@ -43,10 +46,14 @@ module.exports = function(app){
             }
         }
         else{
+            console.log("in the right place: " + newAddOn);
              var currentIndex = characters.indexOf(newAddOn[i]);
              newAddOn[i] = characters[currentIndex+1];
         }
-       
-        process.env.CURRENT_APPENDUM = newAddOn.join("");
+        console.log(newAddOn);
+        Addendum.update({$set: {"addendumToken": newAddOn.join("")}}, function(err, data){
+            console.log("error: " +err);
+            console.log("success? " + data);
+        });
     }
 }
