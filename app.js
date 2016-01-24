@@ -9,7 +9,8 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index.js');
 var newShortcut = require('./routes/newShortcut.js');
 var savedShortcut = require('./routes/savedShortcut.js');
-mongoose.connect('mongodb://heroku_bdpzl0fg:lvaq24pju65pel7t952fdpuvgk@ds047085.mongolab.com:47085/heroku_bdpzl0fg', function (err, db)
+var dotenv = require("dotenv");
+mongoose.connect(process.env.MONGOLAB_URI, function (err, db)
 //mongoose.connect('mongodb://localhost:27017/url-shortener-micro', function (err, db)
 {
  if (err) {
